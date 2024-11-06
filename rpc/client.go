@@ -28,6 +28,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/bytedance/sonic"
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -371,7 +372,7 @@ func (c *Client) CallContext(ctx context.Context, result interface{}, method str
 		if result == nil {
 			return nil
 		}
-		return json.Unmarshal(resp.Result, result)
+		return sonic.Unmarshal(resp.Result, result)
 	}
 }
 

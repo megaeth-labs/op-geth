@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"io"
 	"math"
 	"mime"
@@ -179,7 +180,12 @@ func (c *Client) sendHTTP(ctx context.Context, op *requestOp, msg interface{}) e
 
 	var resp jsonrpcMessage
 	batch := [1]*jsonrpcMessage{&resp}
-	if err := json.NewDecoder(respBody).Decode(&resp); err != nil {
+
+	body, err := io.ReadAll(respBody)
+	if err != nil {
+		return err
+	}
+	if err := sonic.Unmarshal(body, &resp); err != nil {
 		return err
 	}
 	op.resp <- batch[:]
